@@ -5,7 +5,7 @@ const path = require("path");
 const { DB_USER, DB_PASSWORD, DB_HOST } = process.env;
 
 const sequelize = new Sequelize(
-  `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/test`,
+  `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/stripetest`,
   {
     logging: false, 
     native: false, 
@@ -32,10 +32,13 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { Videogame, Genres } = sequelize.models; 
+const { User } = sequelize.models; 
 
-//Genres.belongsToMany(Videogame, { through: "videogame_genero" });
-//Videogame.belongsToMany(Genres, { through: "videogame_genero" });
+// User.hasOne(ConnectedAccount);
+// ConnectedAccount.belongsTo(User);
+
+// User.belongsToMany(ConnectedAccount, { through: "user_connected_account" });
+// ConnectedAccount.belongsToMany(User, { through: "user_connected_account" });
 
 module.exports = {
   ...sequelize.models, 
