@@ -3,35 +3,36 @@ const { User } = require("../db");
 const stripe = require("stripe")("sk_test_51LKNzDKnUbeOMCuBWiIXGCyWrD6OQaRp8lTVTDIp2Ujt9hOr53xap33cEmG2KQgqfsLbCbSeDP9DlVeKpkuQfx2I00iHGZf3Up");
 const user = Router();
 
-// copmo obtengo precio, account strippe(quizas body) y quantyty (front precio y cantidad)
-// PRIMER GET: OBTIENE Y CREA UN PAYMENT LINK, DE UNA CUENTA CONNECTADA A STRIPE(FIRST COONECTED ACCOUNT) CON UN PRECIO Y UNA CANTIDAD
-// QUE LA  CANTIDAD SEGURAMENTE VENDRA DEL CLIENTE, AQUI LO QUE HAY QUE HACER LUEGO ES QUE LOS USER QUE ENTREN  A LA APP
-// PUEDAN PAGAR CON LA CUENTA CONNECTADA A STRIPE A TRAVEZ DE UN LINK QUE SE CREA EN ESTA RUTA
 
 // {CUENTA TEST}
 // stripeAccount: "acct_1LPoEU3W6JgxHUD3",
 var accountTest = "acct_1LPoEU3W6JgxHUD3";
 // price: "price_1LPofz3W6JgxHUD3w7MHE6el",
 var priceTestAccount = "price_1LPofz3W6JgxHUD3w7MHE6el";
-// {SECOND COONECTED ACCOUNT}
-// destination: 'acct_1LPnVc4ISwRLfNGN',
-var connectedAccount = "acct_1LPnVc4ISwRLfNGN";
-// price: 'price_1LPpb14ISwRLfNGNGnhW9X4W',
-var priceConnectedAccount = "price_1LPpb14ISwRLfNGnhW9X4W";
+
 
 
 user.post("/account-connect", async (req, res) => {
   try {
-    const account = await stripe.accounts.create({ type: "express" });
 
+      const account = await stripe.accounts.create({
+        type: 'custom',
+        country: 'US',
+        email: 'jenny.rosen@example.com',
+        capabilities: {
+          card_payments: {requested: true},
+          transfers: {requested: true},
+        },
+      });
     res.send(account);
   } catch (error) {
     console.log(error);
   }
 });
 
+
 user.post("/createUser", async (req, res) => {
-  const { name, email, } = req.body;
+  const { name, email, } = req.body; //FRONT  EN LOGIN AUTH0
   try {
     const account = await stripe.accounts.create({ type: "express" });
     console.log(account.id, "HOLA SOY ACCOUNT DE STRIPE CONNECTED");
@@ -46,6 +47,8 @@ user.post("/createUser", async (req, res) => {
     console.log(error);
   }
 });
+
+ // APP CUENTA PRIMARIA  ----CLIENTES ----PACIENTES 
 
 user.get("/getConnected", async (req, res) => {
   try {
@@ -77,10 +80,34 @@ user.get("/getConnected", async (req, res) => {
 user.get("/getConnected/:id", async (req, res) => {
   try{
     const account = await stripe.accounts.retrieve(req.params.id);
-
     res.send(account);
   }catch(error){console.log(error); res.status(500).send(error)}
 })
+
+
+user.post("/accountLink", async (req, res) => {
+  try {
+    const accountLink = await stripe.accountLinks.create({
+      account:  "acct_1LS7z64IljsDfgOR", // You must update your Connect branding settings with business name, icon, brand color in order to create an account link.
+      refresh_url: 'https://example.com/reauth',
+      return_url: 'https://example.com/return',
+      type: 'account_onboarding',
+    });
+     res.send(accountLink);
+  } catch (error) { res.status(500).send(error); console.log(error); }
+})
+
+user.post("/loginAccount", async (req, res) => {
+  try {
+    const loginLink = await stripe.accounts.createLoginLink(
+      "acct_1LPYfEQKXcCqaVV9" //  "message": "Cannot create a login link for an account that has not completed onboarding.",
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
+
 
 
 
@@ -99,27 +126,6 @@ user.get("/getConnected/:id", async (req, res) => {
 //      url: account.business_profile.url,
 //   }});
 
-// const dbId = async (id) => {
-//   try {
-//     const dbGame = await Videogame.findByPk(id, { include: Genres });
-//     return {
-//       id: dbGame.id,
-//       image: dbGame.background_image,
-//       name: dbGame.name,
-//       description: dbGame.description,
-//       released: dbGame.released,
-//       rating: dbGame.rating,
-//       platforms: dbGame.platforms,
-//       genres: dbGame.genres.map((e) => e.name),
-//     };
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-// const response = await  stripe.costumers.create({
-//   email:email
-// })
 
 
 
