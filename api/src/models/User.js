@@ -4,8 +4,8 @@ module.exports = (sequelize) => {
   sequelize.define("user", {
     name: {
       type: DataTypes.STRING,
-      
     },
+   
     email: {
       type: DataTypes.STRING,
       unique: true,
@@ -13,7 +13,6 @@ module.exports = (sequelize) => {
     account: {
       type: DataTypes.STRING,
       unique: true,
-
     }
   });
 };

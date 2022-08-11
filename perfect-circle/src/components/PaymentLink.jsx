@@ -6,7 +6,7 @@ import {  useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 
-function   UserForm() {
+function PaymentLink() {
     const initialState = { name : "", email : "", }
     const [user, setUser] = useState(initialState);
     const dispatch = useDispatch();
@@ -29,25 +29,20 @@ function   UserForm() {
         setUser({name :"", email: ""})
     }
   return (
-    <div> 
-      <h2> WELCOME</h2>
-      <h4> Please Register </h4>
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-        <Form.Label>Name</Form.Label>
+        <Form.Label>Price</Form.Label>
         <Form.Control name="name" value={user.name} onChange={handleChange}type="text" rows={3} />
       </Form.Group>
       <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-        <Form.Label>Email address</Form.Label>
+        <Form.Label>Quantity</Form.Label>
         <Form.Control name="email" value={user.email} onChange={handleChange} type="email" placeholder="name@example.com" />
       </Form.Group>
       <Button variant="primary" type="submit"> Submit </Button> 
-       <h1>-----------------------------------------------</h1>
-      <Button variant="primary" type="submit" href="/detail"  > Continue with payment </Button>
     </Form>
-    </div>
+    
   );
 }
 
 
-export default UserForm;
+export default PaymentLink;

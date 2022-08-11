@@ -32,13 +32,19 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { User } = sequelize.models; 
+const { User, Price, Product } = sequelize.models; 
 
 // User.hasOne(ConnectedAccount);
 // ConnectedAccount.belongsTo(User);
 
 // User.belongsToMany(ConnectedAccount, { through: "user_connected_account" });
 // ConnectedAccount.belongsToMany(User, { through: "user_connected_account" });
+
+
+//relacionar productos con precios 
+Product.belongsToMany(Price, { through: "product_price" });
+Price.belongsToMany(Product, { through: "product_price" });
+
 
 module.exports = {
   ...sequelize.models, 

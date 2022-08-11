@@ -31,22 +31,22 @@ user.post("/account-connect", async (req, res) => {
 });
 
 
-user.post("/createUser", async (req, res) => {
-  const { name, email, } = req.body; //FRONT  EN LOGIN AUTH0
-  try {
-    const account = await stripe.accounts.create({ type: "express" });
-    console.log(account.id, "HOLA SOY ACCOUNT DE STRIPE CONNECTED");
-    const userCreate = await User.create({
-      name: name,
-      email: email,
-      account: account.id,
-    });
-    res.send(userCreate);
-  } catch (error) {
-    res.status(500).send(error);
-    console.log(error);
-  }
-});
+// user.post("/createUser", async (req, res) => {
+//   const { name, email, } = req.body; //FRONT  EN LOGIN AUTH0
+//   try {
+//     const account = await stripe.accounts.create({ type: "express" });
+//     console.log(account.id, "HOLA SOY ACCOUNT DE STRIPE CONNECTED");
+//     const userCreate = await User.create({
+//       name: name,
+//       email: email,
+//       account: account.id,
+//     });
+//     res.send(userCreate);
+//   } catch (error) {
+//     res.status(500).send(error);
+//     console.log(error);
+//   }
+// });
 
  // APP CUENTA PRIMARIA  ----CLIENTES ----PACIENTES 
 
@@ -88,7 +88,7 @@ user.get("/getConnected/:id", async (req, res) => {
 user.post("/accountLink", async (req, res) => {
   try {
     const accountLink = await stripe.accountLinks.create({
-      account:  "acct_1LS7z64IljsDfgOR", // You must update your Connect branding settings with business name, icon, brand color in order to create an account link.
+      account:  "acct_1LPYfEQKXcCqaVV9", // You must update your Connect branding settings with business name, icon, brand color in order to create an account link.
       refresh_url: 'https://example.com/reauth',
       return_url: 'https://example.com/return',
       type: 'account_onboarding',
@@ -111,20 +111,27 @@ user.post("/loginAccount", async (req, res) => {
 
 
 
-// ((e) => {
-//   return {
-//      mcc: account.business_profile.mcc,
-//      name: account.business_profile.name,
-//      product_description: account.business_profile.product_description,
-//      support_phone: account.business_profile.support_phone,
-//      support_email: account.business_profile.support_email,
-//      url: account.business_profile.url,
-//      support_address: account.business_profile.support_address,
-//      support_email: account.business_profile.support_email,
-//      support_phone: account.business_profile.support_phone,
-//      support_url: account.business_profile.support_url,
-//      url: account.business_profile.url,
-//   }});
+
+user.get("/:email", async (req, res) => {
+  try {
+    const user = await User.findAll(
+      {
+        where: {
+          email: req.params.email,
+        },
+      }
+    )
+    //     console.log(user, "HOLA SOY EL USER")
+    const name = user[0].dataValues.name;
+     const account = user[0].dataValues.account;
+    // console.log(name, "HOLA SOY EL NAME")
+    res.send({name, account});
+  } catch (error) {
+    res.status(500).send(error);
+    console.log(error);
+  }
+})
+
 
 
 
