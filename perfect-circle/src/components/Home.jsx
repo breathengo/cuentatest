@@ -6,15 +6,14 @@ import {  useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 
-function   UserForm() {
+function  Home() {
     const initialState = { name : "", email : "", }
     const [user, setUser] = useState(initialState);
     const dispatch = useDispatch();
-    //const userCreate = useSelector(state => state.userCreate);
+    const userCreate = useSelector(state => state.user);
+    console.log(userCreate, "HOLA SOY EL USER")
+    console.log(userCreate.account, "HOLA SOY EL USER CREATE")
    
-    // useEffect(() => {
-    //   dispatch(Action.userCreate());
-    // } , [])
 
     const handleChange = (e) => {
         setUser({
@@ -43,11 +42,13 @@ function   UserForm() {
       </Form.Group>
       <Button variant="primary" type="submit"> Submit </Button> 
        <h1>-----------------------------------------------</h1>
+       { userCreate.account && 
       <Button variant="primary" type="submit" href="/detail"  > Continue with payment </Button>
+       }
     </Form>
     </div>
   );
 }
 
 
-export default UserForm;
+export default Home;

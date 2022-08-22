@@ -7,10 +7,11 @@ module.exports = (sequelize) => {
     id: {
       type:  DataTypes.STRING,
       primaryKey: true,
-      
     },
     currency: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM(
+        "usd",
+      ),
     },
     unit_amount: {
     type:  DataTypes.INTEGER,

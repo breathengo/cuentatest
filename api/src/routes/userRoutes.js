@@ -14,7 +14,6 @@ var priceTestAccount = "price_1LPofz3W6JgxHUD3w7MHE6el";
 
 user.post("/account-connect", async (req, res) => {
   try {
-
       const account = await stripe.accounts.create({
         type: 'custom',
         country: 'US',
@@ -109,29 +108,39 @@ user.post("/loginAccount", async (req, res) => {
 });
 
 
-
-
-
-user.get("/:email", async (req, res) => {
+user.get("/getUser", async (req, res) => {
+  const {email} = req.query;
+  //console.log(req.query, "HOLA SOY REQ.BODY")
   try {
-    const user = await User.findAll(
-      {
-        where: {
-          email: req.params.email,
-        },
-      }
-    )
-    //     console.log(user, "HOLA SOY EL USER")
-    const name = user[0].dataValues.name;
-     const account = user[0].dataValues.account;
+    const user = await User.findOne({where: {email: email}});
+    // console.log(user, "HOLA SOY EL USER")
+    const nameDb = user.dataValues.name;
+     const accountDb = user.dataValues.account;
+     const emailDb = user.dataValues.email;
     // console.log(name, "HOLA SOY EL NAME")
-    res.send({name, account});
+    res.send({nameDb, accountDb, emailDb});
   } catch (error) {
     res.status(500).send(error);
     console.log(error);
   }
 })
+//un enpoint que me traiga los datos del usuario de la db  en funcion de su correo
 
+user.get("/userEmail/:email", async (req, res) => {
+  const { email } = req.params;
+  console.log(email, "HOLA SOY EL EMAIL")
+  try {
+    const user = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+    res.send(user);
+  } catch (error) {
+    res.status(500).send(error);
+    console.log(error);
+  }
+})
 
 
 

@@ -42,9 +42,11 @@ const { User, Price, Product } = sequelize.models;
 
 
 //relacionar productos con precios 
-Product.belongsToMany(Price, { through: "product_price" });
-Price.belongsToMany(Product, { through: "product_price" });
+Product.belongsTo(User);
+User.hasMany(Product);
 
+Price.belongsTo(User);
+User.hasMany(Price);
 
 module.exports = {
   ...sequelize.models, 
