@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 //import {Detail }from './components/Detail';
 //import  ProductForm  from './components/ProductForm';
 import Verification from './components/Verification';
-import {PriceCreate} from './components/PriceCreate';
+import PlanCreate from './components/PlanCreate';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
       <Routes>
       <Route path="/" element={<Home />} /> 
       <Route exact path="/detail" element={<Verification />} />
-     {/* <Route path="/priceCreate" element={<PriceCreate />} /> */}
+     <Route path="/planCreate" element={<PlanCreate />} />
 
       </Routes>
     </BrowserRouter>

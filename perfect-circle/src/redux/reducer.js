@@ -7,6 +7,8 @@ import {
     LOADING,
     GET_ALL_PRICES,
     PAYMENT_LINK_CREATE,
+    PLAN_CREATE, 
+    GET_ALL_PLANS
 } from "./actions";
 
 const InitialState = {
@@ -18,6 +20,8 @@ const InitialState = {
     loading: false,
     allPrices: [],
     paymentLinkCreate: [],
+    plans: [],
+    allPlans : []
 };
 
 function rootReducer(state = InitialState, action) {
@@ -64,6 +68,16 @@ function rootReducer(state = InitialState, action) {
                     ...state,
                     paymentLinkCreate : action.payload,
                 }
+            case PLAN_CREATE:
+            return {
+                ...state,
+                plans: action.payload,
+            }
+            case GET_ALL_PLANS: 
+            return {
+                ...state,
+                allPlans: action.payload,
+            }    
         default:
             return state;
         }

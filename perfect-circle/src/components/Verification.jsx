@@ -10,6 +10,7 @@ import { Error } from "./Error";
 import { PriceCreate } from "./PriceCreate";
 import InputGroup from 'react-bootstrap/InputGroup';
 import PaymentLink from ".//PaymentLink";
+import PlanCreate from './PlanCreate';
 
 
 export const Verification = () => {
@@ -17,7 +18,7 @@ export const Verification = () => {
     const [input, setInput] = useState(initialState);
     //console.log(input, "HOLA SOY EL PRODUCTO NAME")
     const productos = useSelector(state => state.products);
-    console.log(productos.dbProductId, "HOLA SOY EL PRODUCTO RECIEN AGREGADO DE REDUX")
+    //console.log(productos.dbProductId, "HOLA SOY EL PRODUCTO RECIEN AGREGADO DE REDUX")
     const getUser = useSelector(state => state.getUser);
     //console.log(getUser.emailDb, "HOLA SOY EL ESTADO DE REDUX del user.email")
     const [user, setUser] = useState({ email: "" });
@@ -25,21 +26,24 @@ export const Verification = () => {
     const dispatch = useDispatch();
     const allProducts = useSelector(state => state.allProducts);
     //console.log(allProducts, "TODOS LOS PrODUCTOS")
-    const initialState2 = { unit_amount: "", currency: "" }
-    const [priceInput, setPriceInput] = useState(initialState2);
-    const allPrices = useSelector(state => state.allPrices);
-    const price = useSelector(state => state.prices);
-    console.log(price, "HOLA SOY EL PRECIO DE REDUX")
-    console.log(allPrices, "all prices")
-
+    const initialState2 = { amount: "", currency: "", interval: "" }
+    const [planInput, setPlanInput] = useState(initialState2);
+    const allPlans = useSelector(state => state.allPlans);
+    // const price = useSelector(state => state.prices);
+    //console.log(price, "HOLA SOY EL PRECIO DE REDUX")
+    //console.log(allPrices, "all prices")
+    const plans = useSelector(state => state.plans)
+    console.log(plans, "hola soy plans")
+    const [productSelect, setProductSelect] = useState("");
+    console.log(productSelect, "hola soy el productSelect")
+    
     useEffect(() => {
         if (getUser.emailDb) {
             dispatch(Action.getAllProducts(getUser.emailDb))
         }
-        if(getUser.emailDb && price){
-            dispatch(Action.getAllPrices(getUser.emailDb))
+        if (getUser.emailDb && plans) {
+            dispatch(Action.getAllPlans(getUser.emailDb))
         }
-       
     }, [loading, getUser.emailDb]);
 
     const handleSubmitDirect = (e) => {
@@ -71,29 +75,25 @@ export const Verification = () => {
     const handleSubmitPrice = (e) => {
         e.preventDefault();
         // tomar el producto del select y mandarlo  a la action de priceCreate
-        if(getUser.emailDb && allProducts.length > 0){  
-            dispatch(Action.priceCreate(priceInput,getUser.emailDb,productos.dbProductId)
+        if (getUser.emailDb && allProducts.length > 0) {
+            dispatch(Action.planCreate(planInput, getUser.emailDb, productSelect) // en productSelect tengo el id del producto 
             )
-            }
+        }
         alert("price created")
     }
-     const handleChangePrice = (e) => {
-        setPriceInput({
-            ...priceInput,
+    const handleChangePlan = (e) => {
+        setPlanInput({
+            ...planInput,
             [e.target.name]: e.target.value,
         })
     }
-    // const handleSelectedPlatforms = (e) => {
-    //     let seteo = input.platforms.find((p) => {
-    //       return p === e.target.value
-    //     })
-    //     if(seteo){ return }else{
-    //      setInput({
-    //          ...input,
-    //          platforms: [...input.platforms, e.target.value],
-    //      })}
-    //  }
- 
+    const handleProductSelectChange = (e) => {
+        console.log(e.target.value, "hola soy el etarget.value")
+        setProductSelect(
+            e.target.value // EL ID DEL PRODUCTO SELECCIONADO, el value del <OPTION>
+        )
+    }
+
     return (
         <div>
             <h4> verification account </h4>
@@ -121,34 +121,36 @@ export const Verification = () => {
                         <h1>---------------------------------------</h1>
                         {allProducts.length > 0 &&
                             <Fragment>
-                                <Form.Select aria-label="Default select example">
+                                <Form.Select aria-label="Default select example" onChange={handleProductSelectChange} value={productSelect}>
                                     {
+                                        allProducts &&
                                         allProducts.map(e =>
-                                            <option value={e.id}>{e.name} hola</option>
-                                            )}
-                                           
+                                            <option value={e.id}>{e.name} </option>
+                                        )}
                                 </Form.Select>
                                 <h1>-------------------------------------------------------------</h1>
                                 <InputGroup className="mb-3" type="submit">
-                                    <Form.Control name="unit_amount" value={priceInput.unit_amount} onChange={handleChangePrice} type="unit_amount" placeholder="plase add price..." />
-                                    <Form.Control name="currency" value={priceInput.currency} onChange={handleChangePrice} type="currency" placeholder="  plase add currency..." />
+                                    <Form.Control name="amount" value={planInput.amount} onChange={handleChangePlan} type="amount" placeholder="plase add price..." />
+                                    <Form.Control name="currency" value={planInput.currency} onChange={handleChangePlan} type="currency" placeholder="  plase add currency..." />
+                                    <Form.Control name="interval" value={planInput.interval} onChange={handleChangePlan} type="interval" placeholder="  plase add interval..." />
+
                                     <Button variant="outline-secondary" id="button-addon2" type="submit" onClick={(e) => handleSubmitPrice(e)}>
                                         Add Price
                                     </Button>
                                 </InputGroup>
-                                <h4> ⭐ {price.name} </h4>
-                               {console.log(price.name, "hola soy price.name del h4")}
-                                <h4> ⭐ {price.price} </h4>
+                                <h4> ⭐ {plans.name} </h4>
+                               
+                                <h4> ⭐ {plans.plan} </h4>
                                 <Form.Select aria-label="Default select example">
-                                   {price && allPrices.length > 0 &&
-                                   allPrices.map(o =>
-                                      <Fragment>
-                                       <option value={o.id} placeholder="all prices">{o.price} </option>
-                                       </Fragment>
-                                   )}
-                               </Form.Select>
-                               <h1> -----------------------------------</h1>
-                                        <PaymentLink id={price.priceId} email={getUser.emailDb}/>
+                                    { allPlans.length > 0 &&
+                                        allPlans.map(o =>
+                                            <Fragment>
+                                                <option value={o.id} placeholder="all plans">{o.plans} </option>
+                                            </Fragment>
+                                        )}
+                                </Form.Select>
+                                <h1> -----------------------------------</h1>
+                                <PaymentLink id={plans.planId} email={getUser.emailDb} />
                             </Fragment>
                         }
                     </Fragment>

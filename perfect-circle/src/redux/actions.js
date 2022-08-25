@@ -8,6 +8,8 @@ export const PRICE_CREATE = "PRICE_CREATE";
 export const LOADING = "LOADING";
 export const GET_ALL_PRICES = "GET_ALL_PRICES";
 export const PAYMENT_LINK_CREATE = "PAYMENT_LINK_CREATE";
+export const PLAN_CREATE = "PLAN_CREATE";
+export const  GET_ALL_PLANS = "GET_ALL_PLANS";
 
 export function userCreate(payload) {
   return async (dispatch) => {
@@ -153,3 +155,42 @@ export  function paymentLinkCreate(payload, email, id) {
       console.log(err);
     }
 }};
+
+export  function planCreate(payload, email, productId) {
+  console.log(payload,"soy el payload A ")
+  console.log(email,"soy el email A ")
+  console.log(productId,"soy el productId   A  ")
+  return async(dispatch) => {
+    try{
+      dispatch({
+        type:LOADING,
+        payload:true,
+      })
+      const json = await axios.post(`http://localhost:3002/payment/createPlan/${productId}/?email=${email}`, payload);
+      console.log(json.data, "HOLA SOY json.DATA DE CREATE PRICE")
+      dispatch({
+        type:LOADING,
+        payload:false,
+      })
+      return dispatch({
+        type: PLAN_CREATE,
+        payload: json.data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+}};
+
+export function getAllPlans(email){
+  return async (dispatch) => {
+    try{
+      const json = await axios.get(`http://localhost:3002/payment/getAllPlans?email=${email}` );
+      console.log(json.data, "HOLA SOY DATA DE GET ALL PRICES")
+      return dispatch({
+        type: GET_ALL_PLANS,
+        payload: json.data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+}}
