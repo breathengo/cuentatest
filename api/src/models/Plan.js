@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 // Luego le injectamos la conexion a sequelize.
 module.exports = (sequelize) => {
   // defino el modelo
-  sequelize.define("price", {
+  sequelize.define("plan", {
     id: {
       type:  DataTypes.STRING,
       primaryKey: true,
@@ -13,11 +13,19 @@ module.exports = (sequelize) => {
         "usd",
       ),
     },
-    unit_amount: {
+    amount: {
     type:  DataTypes.INTEGER,
     },
     product: {
       type: DataTypes.STRING,
     },
+    interval: {
+        type: DataTypes.ENUM(
+            "day", 
+            "week",
+            "month", 
+            "year", 
+        )
+    }
   });
 };

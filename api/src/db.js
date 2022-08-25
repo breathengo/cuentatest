@@ -32,7 +32,7 @@ let capsEntries = entries.map((entry) => [
 ]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-const { User, Price, Product } = sequelize.models; 
+const { User, Plan, Product } = sequelize.models; 
 
 // User.hasOne(ConnectedAccount);
 // ConnectedAccount.belongsTo(User);
@@ -45,8 +45,8 @@ const { User, Price, Product } = sequelize.models;
 Product.belongsTo(User);
 User.hasMany(Product);
 
-Price.belongsTo(User);
-User.hasMany(Price);
+Plan.belongsTo(User);
+User.hasMany(Plan);
 
 module.exports = {
   ...sequelize.models, 

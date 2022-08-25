@@ -11,10 +11,10 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING,
     },
-    price: {
+    plan: {
       type: DataTypes.INTEGER,
     },
-    priceId: {
+    planId: {
       type: DataTypes.STRING,
     },
   });

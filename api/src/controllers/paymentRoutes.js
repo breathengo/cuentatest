@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { User, Product, Price } = require("../db.js");
+const { User, Product, Price, Plan } = require("../db.js");
 const stripe = require("stripe")(
   "sk_test_51LKNzDKnUbeOMCuBWiIXGCyWrD6OQaRp8lTVTDIp2Ujt9hOr53xap33cEmG2KQgqfsLbCbSeDP9DlVeKpkuQfx2I00iHGZf3Up"
 );
@@ -28,8 +28,8 @@ payment.post("/createProduct", async (req, res) => {
     const dbProduct = await Product.create({
       id: product.id,
       name: name,
-      price: 0,
-      priceId: "",
+      plan: 0,
+      planId: "",
     });
      await user.addProduct(dbProduct) // jere vinculacion del producto al ususario
     //console.log(dbProduct, "HOLA SOY EL PRODUCTO");
@@ -168,28 +168,88 @@ payment.get("/getAllProducts", async (req, res) => {
     console.log(error)
   }
 })
- payment.get("/getAllPrices", async (req,res) => {
-  const { email } = req.query;
-  try{
+ payment.get("/getAllPrices", async (req, res) => {
+   const { email } = req.query;
+   try {
+     const user = await User.findOne({
+       where: {
+         email: email,
+       },
+     });
+     const allPrices = await Product.findAll({ where: { userId: user.id } });
+     res.send(allPrices);
+   } catch (error) {
+     res.status(500).send(error);
+     console.log(error);
+   }
+ });
+
+payment.post("/createPlan/:productId/", async (req, res) => {
+  const { amount, currency, interval} = req.body;
+  const {email} = req.query;
+  const {productId} = req.params;
+  console.log(email, "HOLA SOY EL EMAIL");
+  console.log(amount, "HOLA SOY EL PRECIO");
+  console.log(productId, "HOLA SOY EL PRODUCTID");
+  console.log(currency, "HOLA SOY EL CURRENCY");
+  console.log(req.body, "req.bpdy")
+  try {
     const user = await User.findOne({
       where: {
         email: email,
+      },
+    });
+    const dbProduct = await Product.findByPk(productId);
+  console.log(dbProduct, "HOLA SOY EL DBPRODUCT")
+    const plan = await stripe.plans.create(
+      {
+        currency: "usd",
+        amount: amount,
+        product: dbProduct.dataValues.id,
+        interval: interval
+      },
+      {
+        stripeAccount: user.dataValues.account,
       }
-    })
-  const allPrices = await Product.findAll(
-    { where: { userId: user.id } }
-  )
-  res.send(allPrices);
-  }catch(error) {
-    res.status(500).send(error)
-    console.log(error)
+    );
+    //guardar price en la db del modelo de Price 
+    const dbPlan = await Plan.create({
+      id: plan.id,
+      amount: amount,
+      currency: currency,
+      product: productId,
+      interval: interval,
+    });
+    user.addPlan(dbPlan)  // aca vinculo  el user con el plan , al nuevo plan creado (le asigno  al usuario ese plan)
+    console.log(plan, " plan");
+    dbProduct.plan = plan.amount;
+     console.log(dbProduct.plan, "HOLA SOY dbProduct.plan")
+     dbProduct.planId = plan.id;
+     console.log(dbProduct.planId, "HOLA SOY EL PRICEID")
+    await dbProduct.save();
+    res.send(dbProduct);
+  } catch (error) {
+    res.status(500).send(error);
+    console.log(error);
   }
-}
-)
-
-
-
-
-
+});
+payment.get("/getAllPlans", async (req, res) => {
+  const { email } = req.query;
+  console.log(email, "email de  get all plans")
+  try {
+    const user = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+     console.log(user, "user")
+    const allPlans = await Plan.findAll({ where: { userId: user.id }});
+    console.log(allPlans, "hola soy all plans")
+    res.send(allPlans);
+  } catch (error) {
+    res.status(500).send(error);
+    console.log(error);
+  }
+});
 
 module.exports = payment;

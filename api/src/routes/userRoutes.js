@@ -4,12 +4,6 @@ const stripe = require("stripe")("sk_test_51LKNzDKnUbeOMCuBWiIXGCyWrD6OQaRp8lTVT
 const user = Router();
 
 
-// {CUENTA TEST}
-// stripeAccount: "acct_1LPoEU3W6JgxHUD3",
-var accountTest = "acct_1LPoEU3W6JgxHUD3";
-// price: "price_1LPofz3W6JgxHUD3w7MHE6el",
-var priceTestAccount = "price_1LPofz3W6JgxHUD3w7MHE6el";
-
 
 
 user.post("/account-connect", async (req, res) => {
