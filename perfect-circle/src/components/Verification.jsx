@@ -29,14 +29,13 @@ export const Verification = () => {
     const initialState2 = { amount: "", currency: "", interval: "" }
     const [planInput, setPlanInput] = useState(initialState2);
     const allPlans = useSelector(state => state.allPlans);
-    // const price = useSelector(state => state.prices);
-    //console.log(price, "HOLA SOY EL PRECIO DE REDUX")
-    //console.log(allPrices, "all prices")
+   
     const plans = useSelector(state => state.plans)
     console.log(plans, "hola soy plans")
     const [productSelect, setProductSelect] = useState("");
     console.log(productSelect, "hola soy el productSelect")
-    
+    const [planSelect, setPlanSelect] = useState("");
+
     useEffect(() => {
         if (getUser.emailDb) {
             dispatch(Action.getAllProducts(getUser.emailDb))
@@ -88,8 +87,14 @@ export const Verification = () => {
         })
     }
     const handleProductSelectChange = (e) => {
-        console.log(e.target.value, "hola soy el etarget.value")
+        //console.log(e.target.value, "hola soy el etarget.value")
         setProductSelect(
+            e.target.value // EL ID DEL PRODUCTO SELECCIONADO, el value del <OPTION>
+        )
+    }
+    const handlePlanSelectChange = (e) => {
+        console.log(e.target.value, "hola soy el etarget.value")
+        setPlanSelect(
             e.target.value // EL ID DEL PRODUCTO SELECCIONADO, el value del <OPTION>
         )
     }
@@ -135,18 +140,21 @@ export const Verification = () => {
                                     <Form.Control name="interval" value={planInput.interval} onChange={handleChangePlan} type="interval" placeholder="  plase add interval..." />
 
                                     <Button variant="outline-secondary" id="button-addon2" type="submit" onClick={(e) => handleSubmitPrice(e)}>
-                                        Add Price
+                                        Add Plan
                                     </Button>
                                 </InputGroup>
                                 <h4> ⭐ {plans.name} </h4>
-                               
                                 <h4> ⭐ {plans.plan} </h4>
-                                <Form.Select aria-label="Default select example">
+                                <Form.Select aria-label="Default select example" onChange={handlePlanSelectChange} value={planSelect}>
                                     { allPlans.length > 0 &&
                                         allPlans.map(o =>
-                                            <Fragment>
-                                                <option value={o.id} placeholder="all plans">{o.plans} </option>
-                                            </Fragment>
+                                                <option value={o.id} >{o.amount}</option>
+                                        )}
+                                </Form.Select>
+                                <Form.Select aria-label="Default select example" onChange={handlePlanSelectChange} value={planSelect}>
+                                    { allPlans.length > 0 &&
+                                        allPlans.map(o =>
+                                                <option value={o.id} >{o.interval}</option>
                                         )}
                                 </Form.Select>
                                 <h1> -----------------------------------</h1>

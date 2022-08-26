@@ -13,13 +13,8 @@ function PaymentLink({id, email }) {
     const [input, setInput] = useState(initialState);
     const dispatch = useDispatch();
     const {paymentLinkCreation, getUser} = useSelector(state => state);
-    const loading = useSelector(state => state.loading);
-   
-    // useEffect(() => {
-    //   if(email){
-    //   dispatch(Action.paymentLinkCreate(input, email, id));
-    //   }
-    // } , [loading, ]);
+    console.log(paymentLinkCreation, "hola sy el LINK")
+ 
 
     const handleChange = (e) => {
         setInput({
@@ -29,14 +24,11 @@ function PaymentLink({id, email }) {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(Action.paymentLinkCreate(input, email, id));
+        dispatch(Action.paymentLinkCreate(input.quantity, email, id));
         alert("URL FOR PAYMENT WAS CREATED")
         // setInput({quantity: ""})
     }
-  //   const handleDirecToDetails = () => {
-  //     window.location.href = {paymentLinkCreation}
-  
-  // };
+    
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -45,7 +37,10 @@ function PaymentLink({id, email }) {
       </Form.Group>
       <Button variant="primary" type="submit"> CREAR PAYMENT LINK</Button> 
       <h1>-----------------------------------------------</h1>
-         <a href={paymentLinkCreation} target={"_blank"}>⭐⭐{paymentLinkCreation}⭐⭐</a>
+         <a href={paymentLinkCreation} target={"_blank"}
+         
+         >⭐⭐{paymentLinkCreation}⭐⭐</a>
+         
     </Form>
     
   );
