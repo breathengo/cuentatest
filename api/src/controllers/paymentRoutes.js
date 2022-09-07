@@ -16,7 +16,6 @@ payment.post("/createProduct", async (req, res) => {
         email: email,
       },
     });
-    //console.log(user, "HOLA SOY EL USER");
     const product = await stripe.products.create(
       {
         name: name,
@@ -31,21 +30,15 @@ payment.post("/createProduct", async (req, res) => {
       plan: 0,
       planId: "",
     });
-     await user.addProduct(dbProduct) // jere vinculacion del producto al ususario
-    //console.log(dbProduct, "HOLA SOY EL PRODUCTO");
+     await user.addProduct(dbProduct) // vinculacion del producto al ususario
   const dbProductId = await dbProduct.dataValues.id;
   const dbProductName = await dbProduct.dataValues.name;
-  //const dbEmail = await user.dataValues.email;
-    //console.log(dbProduct, "HOLA SOY DB PRODUCT")
     res.send({dbProductName, dbProductId}); 
   } catch (error) {
     res.status(500).send(error);
     console.log(error);
   }
 });
-// endpoint  que me traiga todos los  productos de la db , un enpoint que me traiga los datos del usuario de la db  en funcion de su correo
-//
-//cear ruta para precio
 payment.post("/createPrice/:productId/", async (req, res) => {
   const { unit_amount, currency} = req.body;
   const {email} = req.query;
@@ -61,7 +54,6 @@ payment.post("/createPrice/:productId/", async (req, res) => {
       },
     });
     const dbProduct = await Product.findByPk(productId);
-    //console.log(dbProduct.product, "HOLA SOY EL DBPRODUCT")
     const price = await stripe.prices.create(
       {
         currency: "usd",
@@ -72,18 +64,14 @@ payment.post("/createPrice/:productId/", async (req, res) => {
         stripeAccount: user.dataValues.account,
       }
     );
-    //guardar price en la db del modelo de Price 
     const dbPrice = await Price.create({
       id: price.id,
       unit_amount: unit_amount,
       currency: currency,
       product: productId,
     });
-    console.log(price, "HOLA SOY PRICE");
     dbProduct.price = price.unit_amount;
-    //console.log(dbProduct.price, "HOLA SOY EL PRICE")
     dbProduct.priceId = price.id;
-    //console.log(dbProduct.metadata.priceid, "HOLA SOY EL PRICEID")
     await dbProduct.save();
     res.send(dbProduct);
   } catch (error) {
@@ -91,7 +79,6 @@ payment.post("/createPrice/:productId/", async (req, res) => {
     console.log(error);
   }
 });
-
 payment.post("/createUser/", async (req, res) => {
   const { email, name } = req.body;
   try {
@@ -107,14 +94,12 @@ payment.post("/createUser/", async (req, res) => {
       email: email,
       account: account.id,
     });
-    //console.log(user, "HOLA SOY EL USER")
     res.send(user);
   } catch (error) {
     res.status(500).send(error);
     console.log(error);
   }
 });
-
 payment.post("/paymentLink/:id/", async (req, res) => {
   const { quantity} = req.body;
   const { email } = req.query;
@@ -144,13 +129,11 @@ payment.post("/paymentLink/:id/", async (req, res) => {
       }
     );
     res.send(paymentLink.url);
-    //console.log(user.account)
   } catch (error) {
     res.status(500).send(error);
     console.log(error);
   }
 });
-
 payment.get("/getAllProducts", async (req, res) => {
    const { email } = req.query;
   try{
@@ -183,7 +166,6 @@ payment.get("/getAllProducts", async (req, res) => {
      console.log(error);
    }
  });
-
 payment.post("/createPlan/:productId/", async (req, res) => {
   const { amount, currency, interval} = req.body;
   const {email} = req.query;
@@ -212,7 +194,6 @@ payment.post("/createPlan/:productId/", async (req, res) => {
         stripeAccount: user.dataValues.account,
       }
     );
-    //guardar price en la db del modelo de Price 
     const dbPlan = await Plan.create({
       id: plan.id,
       amount: amount,
@@ -220,7 +201,7 @@ payment.post("/createPlan/:productId/", async (req, res) => {
       product: productId,
       interval: interval,
     });
-    user.addPlan(dbPlan)  // aca vinculo  el user con el plan , al nuevo plan creado (le asigno  al usuario ese plan)
+    user.addPlan(dbPlan) //(asigno  al usuario ese plan)
     console.log(plan, " plan");
     dbProduct.plan = plan.amount;
      console.log(dbProduct.plan, "HOLA SOY dbProduct.plan")
@@ -235,16 +216,13 @@ payment.post("/createPlan/:productId/", async (req, res) => {
 });
 payment.get("/getAllPlans", async (req, res) => {
   const { email } = req.query;
-  console.log(email, "email de  get all plans")
   try {
     const user = await User.findOne({
       where: {
         email: email,
       },
     });
-     console.log(user, "user")
     const allPlans = await Plan.findAll({ where: { userId: user.id }});
-    console.log(allPlans, "hola soy all plans")
     res.send(allPlans);
   } catch (error) {
     res.status(500).send(error);
