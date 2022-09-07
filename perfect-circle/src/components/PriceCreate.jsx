@@ -31,9 +31,6 @@ export const PriceCreate = () => {
         dispatch(Action.priceCreate( input.currency,input.unit_amount,id)); 
         alert("price created")
     }
-
-
-     
     return (
         <div>
          <Form onSubmit={handleSubmit}>

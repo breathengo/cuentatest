@@ -28,7 +28,6 @@ const PlanCreate = () => {
         }
       
     }, [loading, getUser.emailDb])
-    
   return (
       <div>  
           <label htmlFor="cars">Choose a Plan</label>

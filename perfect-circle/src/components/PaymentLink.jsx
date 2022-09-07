@@ -28,7 +28,6 @@ function PaymentLink({id, email }) {
         alert("URL FOR PAYMENT WAS CREATED")
         // setInput({quantity: ""})
     }
-    
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
